@@ -1,0 +1,30 @@
+{
+  "dock_apps": [
+    "com.google.android.youtube.tv",
+    "com.spotify.tv.android"
+  ],
+  "columns": 8,
+  "single_row": true,
+  "rows_below_dock": 0,
+  "dock_title": false,
+  "dock_band": false,
+  "square_tiles": true,
+  "now_playing": true,
+  "wallpaper_button": true,
+  "app_library": true,
+  "icon_only_buttons": true,
+  "icon_only_inputs": true,
+  "ambient_glow": false,
+  "app_glow": true,
+  "glass_style": "halo",
+  "focus_overshoot": true,
+  "advanced_effects": true,
+  "background_color": "#05070C",
+  "wallpaper": true,
+  "wallpaper_rotation_minutes": 60,
+  "wallpaper_order": "sequential",
+  "wallpaper_true_color": true,
+  "wallpaper_dim": 8,
+  "settings_key_keycodes": [83],
+  "app_keys": ["190:com.google.android.youtube.tv"]
+}
