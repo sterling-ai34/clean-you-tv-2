@@ -266,6 +266,12 @@ final class Config {
     final boolean singleRow;
     /** With single_row, the band runs behind every app in the row, not only the dock apps (config.xml, dock_band_all). */
     final boolean dockBandAll;
+    /** Square app-icon tiles that float over the wallpaper, Apple style (config.xml, square_tiles). */
+    final boolean squareTiles;
+    /** The playing song's artwork, title and controls in a pill in the top bar (config.xml, now_playing). */
+    final boolean nowPlaying;
+    /** A round button in the top bar that shows the next wallpaper; held, it opens Launcher settings (wallpaper_button). */
+    final boolean wallpaperButton;
 
     private Config(List<String> dockApps, boolean fillDock, List<String> hiddenApps, List<String> libraryApps, List<String> libraryExcludedApps, String liveTvPackage,
                    String liveTvAction, String liveTvInputId, Map<String, String> launchActions, Map<String, String> appLabels,
@@ -281,7 +287,11 @@ final class Config {
                    boolean keyFilter, boolean dockGlass, String glowStyle, boolean wallpaperCaptions,
                    boolean handleViewInputs, boolean tileMenu, boolean dockEvenPadding, boolean dockBand, boolean cinematicDots, boolean cinematicWhiteFocus, boolean wifiStatusColor, int cinematicScrim, int cinematicArt,
                    Map<String, Set<String>> wallpaperMoods, boolean gamepadPassthrough, boolean consumeVolumeKeys, boolean powerOnHome, boolean homeLongPressHome, boolean wifiStatusWarnings, List<String> topBarApps, boolean showGreeting, boolean headerWhite, boolean clockWallpaper, int clockWallpaperDim, boolean clockGlow, String glassStyle, boolean singleRow, boolean dockBandAll, boolean lunarDate, int lunarUtcOffset, boolean dateBelowClock, boolean vpnPill, String locale, boolean powerOnHomeAlways, boolean inputsConnectedOnly,
-                   int openOnStartNetworkWait, boolean iconOnlyVpn) {
+                   int openOnStartNetworkWait, boolean iconOnlyVpn, boolean squareTiles, boolean nowPlaying,
+                   boolean wallpaperButton) {
+        this.squareTiles = squareTiles;
+        this.nowPlaying = nowPlaying;
+        this.wallpaperButton = wallpaperButton;
         this.handleViewInputs = handleViewInputs;
         this.tileMenu = tileMenu;
         this.inputKeycodes = inputKeycodes;
@@ -516,6 +526,9 @@ final class Config {
         String glassStyle = res.getString(R.string.glass_style);
         boolean singleRow = res.getBoolean(R.bool.single_row);
         boolean dockBandAll = res.getBoolean(R.bool.dock_band_all);
+        boolean squareTiles = res.getBoolean(R.bool.square_tiles);
+        boolean nowPlaying = res.getBoolean(R.bool.now_playing);
+        boolean wallpaperButton = res.getBoolean(R.bool.wallpaper_button);
         boolean applied = false;
 
         File dir = dir(ctx);
@@ -624,6 +637,9 @@ final class Config {
             clockGlow = bool(json, "clock_glow", clockGlow);
             singleRow = bool(json, "single_row", singleRow);
             dockBandAll = bool(json, "dock_band_all", dockBandAll);
+            squareTiles = bool(json, "square_tiles", squareTiles);
+            nowPlaying = bool(json, "now_playing", nowPlaying);
+            wallpaperButton = bool(json, "wallpaper_button", wallpaperButton);
             glowStyle = string(json, "glow_style", glowStyle);
             glassStyle = string(json, "glass_style", glassStyle);
         }
@@ -687,7 +703,7 @@ final class Config {
                 consumeVolumeKeys, powerOnHome, homeLongPressHome, wifiStatusWarnings, topBarApps, showGreeting, headerWhite, clockWallpaper,
                 Math.max(0, Math.min(90, clockWallpaperDim)), clockGlow, glassStyle, singleRow && dockRow, dockBandAll, lunar, lunarOffset,
                 dateBelowClock, vpnPill, locale, powerOnHomeAlways, inputsConnectedOnly,
-                Math.max(0, Math.min(600, openOnStartNetworkWait)), iconOnlyVpn);
+                Math.max(0, Math.min(600, openOnStartNetworkWait)), iconOnlyVpn, squareTiles, nowPlaying, wallpaperButton);
     }
 
     /**

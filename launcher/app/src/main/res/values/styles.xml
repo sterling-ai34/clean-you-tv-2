@@ -35,6 +35,20 @@
         <item name="android:drawablePadding">0dp</item>
     </style>
 
+    <!-- now_playing: previous / play / next in the music pill, a 38dp disc when focused. -->
+    <style name="MediaButton">
+        <item name="android:layout_width">38dp</item>
+        <item name="android:layout_height">38dp</item>
+        <item name="android:layout_marginStart">2dp</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:scaleType">fitCenter</item>
+        <item name="android:background">@drawable/media_button_bg</item>
+        <item name="android:tint">@drawable/pill_text</item>
+        <item name="android:focusable">true</item>
+        <item name="android:clickable">true</item>
+        <item name="android:nextFocusDown">@id/grid</item>
+    </style>
+
     <style name="SettingsRow">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">52dp</item>

@@ -294,6 +294,16 @@
     <!-- With single_row, the band runs behind every app in the row, apps installed later included, instead of
          the dock apps only. Can also be set with "dock_band_all" in a theme. -->
     <bool name="dock_band_all">false</bool>
+    <!-- Square app-icon tiles that float over the wallpaper with a soft shadow and a glossy top, Apple style, instead
+         of the apps' banners. Pairs well with single_row, dock_band false and 7 or 8 columns. "square_tiles" in a theme. -->
+    <bool name="square_tiles">false</bool>
+    <!-- A pill in the top bar with the playing song's artwork, title, artist and previous / play / next buttons, from
+         any app that plays media (Spotify, YouTube Music...). Needs notification access, which the install script
+         grants with NOW_PLAYING=1. "now_playing" in a theme. -->
+    <bool name="now_playing">false</bool>
+    <!-- A round picture button in the top bar: OK shows the next wallpaper of the theme's collection, holding OK opens
+         Launcher settings to pick one. "wallpaper_button" in a theme. -->
+    <bool name="wallpaper_button">false</bool>
     <!-- The dock band's padding equals the gap between its tiles on all four sides (as far as the grid's edges leave room),
          so its corners are concentric with the tiles' and the spacing reads even. false (the default) keeps the fixed
          14dp above and below, up to 22dp at the sides and 26dp corners. Can also be set with "dock_even_padding": true in a theme's config.json. -->

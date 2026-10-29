@@ -117,6 +117,11 @@ public class AppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return Math.round(tileWidthPx * DESIGN_H_DP / DESIGN_W_DP);
     }
 
+    /** square_tiles: an app-icon tile is as tall as it is wide. */
+    static int tileHeightPx(int tileWidthPx, boolean square) {
+        return square ? tileWidthPx : tileHeightPx(tileWidthPx);
+    }
+
     /** Height of one grid item: the tile, the name label under it and the item's own padding. */
     static int itemHeightPx(int tileHeightPx, float density) {
         return itemHeightPx(tileHeightPx, true, density);
@@ -220,6 +225,8 @@ public class AppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final boolean uniformTiles;
     /** Packages drawn from their icon and name even when they have a banner (config.xml icon_tiles). */
     private final Set<String> iconTiles;
+    /** Square app-icon tiles with a shadow and a glossy top, floating over the wallpaper (config.xml, square_tiles). */
+    private final boolean squareTiles;
     private final List<Entry> items = new ArrayList<>();
 
     AppAdapter(Context ctx, TileListener listener, int dockSize, Config cfg) {
@@ -247,7 +254,9 @@ public class AppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         this.tileMenu = cfg.tileMenu;
         this.appLabels = cfg.appLabels;
         this.appBanners = cfg.appBanners;
-        this.uniformTiles = cfg.uniformTiles;
+        // A square tile is drawn like a uniform one (the icon on a card tinted from it), only square.
+        this.squareTiles = cfg.squareTiles;
+        this.uniformTiles = cfg.uniformTiles || cfg.squareTiles;
         // Tiles keep their identity across reload(), so a focused tile stays on its app instead of
         // its view being rebound to whatever app now sits in that slot.
         setHasStableIds(true);
@@ -415,7 +424,7 @@ public class AppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         float density = parent.getResources().getDisplayMetrics().density;
         int width = parent.getWidth() > 0 ? parent.getWidth() : parent.getMeasuredWidth();
         int inner = width - parent.getPaddingLeft() - parent.getPaddingRight();
-        int w = tileWidthPx(inner, parent.getHeight(), dockSize, rowsBelowDock, dockTitle, dockRow, density), h = tileHeightPx(w);
+        int w = tileWidthPx(inner, parent.getHeight(), dockSize, rowsBelowDock, dockTitle, dockRow, density), h = tileHeightPx(w, squareTiles);
         View card = v.findViewById(R.id.card);
         ViewGroup.LayoutParams cardLp = card.getLayoutParams();
         cardLp.width = w;
@@ -438,9 +447,10 @@ public class AppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             // tvOS-style tile: a large centred mark, no caption inside the card.
             View icon = v.findViewById(R.id.icon);
             FrameLayout.LayoutParams iconLp = (FrameLayout.LayoutParams) icon.getLayoutParams();
-            iconLp.width = iconLp.height = Math.round(h * ICON_SHARE);
+            iconLp.width = iconLp.height = Math.round(h * (squareTiles ? SQUARE_ICON_SHARE : ICON_SHARE));
             iconLp.bottomMargin = 0;
             icon.setLayoutParams(iconLp);
+            if (squareTiles) floatTile((FrameLayout) card, w, density);
         } else if (h < Math.round(DESIGN_H_DP * density)) {
             // Shrunk tiles (e.g. 5 or 6 columns): scale icon and bottom margin proportionally with tile height so the label does not overlap the icon.
             View icon = v.findViewById(R.id.icon);
@@ -689,6 +699,21 @@ public class AppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     /** Share of the tile height the icon takes in uniform_tiles mode (onCreateViewHolder). */
     private static final float ICON_SHARE = 0.62f;
+    /** The same for square_tiles, where the mark fills more of the smaller card, as an app icon does. */
+    private static final float SQUARE_ICON_SHARE = 0.72f;
+
+    /**
+     * square_tiles: the card floats. A soft shadow under it (elevation, cast by the rounded outline) and a glossy
+     * sheen over its top half, the light catching a glass icon. Both are drawn by the render thread from the
+     * outline and one gradient, so the tiles cost no extra bitmaps.
+     */
+    private static void floatTile(FrameLayout card, int width, float density) {
+        card.setElevation(10f * density);
+        GradientDrawable gloss = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM,
+                new int[]{0x47FFFFFF, 0x0DFFFFFF, 0x00FFFFFF});
+        gloss.setCornerRadius(cornerRadius(width, width, density));
+        card.setForeground(gloss);
+    }
 
     /**
      * The colour covering most of an icon, for a card that should read as that app: a small saturated badge
@@ -881,6 +906,12 @@ public class AppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return 16f * density * Math.min(1f, tileWidthPx / (DESIGN_W_DP * density));
     }
 
+    /** The same for a tile of this size: a square one (square_tiles) takes an app icon's rounder corners. */
+    static float cornerRadius(int tileWidthPx, int tileHeightPx, float density) {
+        if (tileWidthPx > 0 && Math.abs(tileWidthPx - tileHeightPx) <= 1) return tileWidthPx * 0.225f;
+        return cornerRadius(tileWidthPx, density);
+    }
+
     static final class Holder extends RecyclerView.ViewHolder {
         final View card;
         /** item_app.xml's tile_bg: the dark card behind an icon tile, or behind a banner that has transparent parts. */
@@ -918,7 +949,8 @@ public class AppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 @Override
                 public void getOutline(View view, Outline outline) {
                     // 16dp at the design width, scaled down with the tile so small tiles keep the same shape.
-                    outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), cornerRadius(view.getWidth(), density));
+                    outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(),
+                            cornerRadius(view.getWidth(), view.getHeight(), density));
                 }
             });
             card.setClipToOutline(true);

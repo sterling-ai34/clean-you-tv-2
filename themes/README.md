@@ -149,6 +149,9 @@ A new key needs one there in the same pull request.
 | `dock_even_padding` | bool | The dock band's padding equals the gap between its tiles on all four sides, as far as the grid's edges leave room (`false` by default) |
 | `dock_glass` | bool | The dock band as light frosted glass like the top bar's pills (`false` by default); suits `sky_intensity` or a wallpaper, where the solid band reads as a dark slab |
 | `dock_band` | bool | Draw the dock band and its edge (`true` by default); `false` leaves the tiles floating on the wallpaper with no band, border or dark slab |
+| `square_tiles` | bool | Square app-icon tiles, the icon on a card tinted from it, with app-icon corners, a soft shadow and a glossy top, so they float over the wallpaper (`false` by default); suits `single_row`, `dock_band: false` and 7 or 8 `columns` |
+| `now_playing` | bool | A pill left of the top buttons with the playing song's artwork, title, artist, moving bars and previous / play / next, from any app that plays media; hidden while nothing plays. Needs `NOW_PLAYING=1` at install (`-NowPlaying` on Windows) for notification access (`false` by default) |
+| `wallpaper_button` | bool | A round picture button in the top bar: OK shows the collection's next wallpaper (needs `wallpaper_rotation_minutes` above 0 and a `wallpapers/` folder), holding OK opens Launcher settings to pick one (`false` by default) |
 | `single_row` | bool | Every app in the dock's row, the dock apps first, scrolling sideways; no grid below (`false` by default; needs `dock_row`) |
 | `dock_band_all` | bool | With `single_row`, the band runs behind every app in the row, not only the dock apps (`false` by default) |
 | `ambient_glow` | bool | The glow behind the dock in the focused app's colour (`true` by default); `false` keeps only `background_color` or the wallpaper, e.g. for a calm photo background |

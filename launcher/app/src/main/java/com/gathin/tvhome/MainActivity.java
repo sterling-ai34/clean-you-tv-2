@@ -657,7 +657,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             // Item height follows the tile size, which follows the columns and the rows that must fit (AppAdapter.tileWidthPx).
             int inner = (r - l) - grid.getPaddingLeft() - grid.getPaddingRight();
             int tileW = AppAdapter.tileWidthPx(inner, h, COLUMNS, rowsBelowDock, cfg.dockTitle, cfg.dockRow, density);
-            int itemH = AppAdapter.itemHeightPx(AppAdapter.tileHeightPx(tileW), density);
+            int itemH = AppAdapter.itemHeightPx(AppAdapter.tileHeightPx(tileW, cfg.squareTiles), density);
             int dockRow = itemH + (int) (AppAdapter.DOCK_EXTRA_DP * density);   // item height plus DockDecoration offsets
             int gridRows = itemH * rowsBelowDock;
             // Keep the hero below the header when the library is enabled on a short screen,
@@ -796,6 +796,22 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             libraryFromTopBar = true;   // closing it goes back to this button, not to the pill after the last row
         });
         btnLibraryTop.setVisibility(cfg.libraryButton && cfg.appLibrary ? View.VISIBLE : View.GONE);
+        btnWallpaper = findViewById(R.id.btnWallpaper);
+        if (cfg.wallpaperButton) {
+            btnWallpaper.setVisibility(View.VISIBLE);
+            // A single picture (or one picked on the TV) has no next one: open the picker in Launcher settings.
+            btnWallpaper.setOnClickListener(v -> {
+                if (!wallpaperPlayer.next()) openLauncherSettings();
+            });
+            btnWallpaper.setOnLongClickListener(v -> {
+                openLauncherSettings();
+                return true;
+            });
+        }
+        if (cfg.nowPlaying) {
+            nowPlaying = new NowPlaying(this, handler, findViewById(R.id.nowPlaying), reducedMotion,
+                    () -> firstTopButton().requestFocus());
+        }
         addTopBarApps(cfg.topBarApps, cfg.launchActions);
         iconOnlyButtons = cfg.iconOnlyButtons;
         topMenu = cfg.topMenu;
@@ -855,6 +871,10 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
                 return true;
             }
             int firstButton = btnInputs.getVisibility() == View.VISIBLE ? R.id.btnInputs : firstTopButton().getId();
+            // The music pill sits beside the buttons (left of them, right in Hebrew): its outer button ends the bar.
+            if (nowPlaying != null && findViewById(R.id.nowPlaying).getVisibility() == View.VISIBLE) {
+                firstButton = rtlMenuBar ? R.id.npNext : R.id.npPrev;
+            }
             int leftButton = rtlMenuBar ? R.id.btnSettings : firstButton;
             int rightButton = rtlMenuBar ? firstButton : R.id.btnSettings;
             if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) return v.getId() == leftButton;
@@ -866,9 +886,11 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         btnSettings.setOnKeyListener(pillKeys);
         btnReorder.setOnKeyListener(pillKeys);
         btnLibraryTop.setOnKeyListener(pillKeys);
+        btnWallpaper.setOnKeyListener(pillKeys);
+        for (int id : new int[]{R.id.npPrev, R.id.npPlay, R.id.npNext}) findViewById(id).setOnKeyListener(pillKeys);
         for (View button : topAppButtons) button.setOnKeyListener(pillKeys);
         if (advancedEffects) {
-            List<View> pills = new ArrayList<>(Arrays.asList(btnInputs, btnWifi, btnVpn, btnReorder, btnLibraryTop, btnSettings));
+            List<View> pills = new ArrayList<>(Arrays.asList(btnInputs, btnWifi, btnVpn, btnReorder, btnLibraryTop, btnWallpaper, btnSettings));
             pills.addAll(topAppButtons);
             for (View button : pills) {
                 button.setOnFocusChangeListener((view, focused) -> view.animate()
@@ -961,6 +983,10 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         return true;
     }
 
+    private void openLauncherSettings() {
+        startActivityForResult(new Intent(this, LauncherSettingsActivity.class), LAUNCHER_SETTINGS_REQUEST);
+    }
+
     private boolean openLauncherSettingsIfAsked(Intent intent) {
         if (intent == null || !ACTION_LAUNCHER_SETTINGS.equals(intent.getAction())) return false;
         setIntent(new Intent(Intent.ACTION_MAIN));
@@ -1004,6 +1030,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         }
         updateClockVisibility();
         tileRefresh.onStart();
+        if (nowPlaying != null) nowPlaying.start();
     }
 
     @Override
@@ -1252,6 +1279,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         handler.removeCallbacks(clockCheck);
         stopped = true;
         tileRefresh.onStop();
+        if (nowPlaying != null) nowPlaying.stop();
     }
 
     /**
@@ -1727,7 +1755,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             lp.height = (int) h;
             glass.setLayoutParams(lp);
             // GlassView draws its slab inset by pad, i.e. exactly over the zoomed tile: same corners as the tile.
-            glass.setRadius(AppAdapter.cornerRadius(card.getWidth(), density) * scale);
+            glass.setRadius(AppAdapter.cornerRadius(card.getWidth(), card.getHeight(), density) * scale);
         }
         glassCardW = card.getWidth();
         glassTargetX = x;
@@ -2884,6 +2912,10 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     private ColorStateList wifiNoInternetTint, wifiOfflineTint;
     /** The app library button in the top bar (library_button). */
     private View btnLibraryTop;
+    /** wallpaper_button: the round picture button that shows the next wallpaper. */
+    private View btnWallpaper;
+    /** now_playing: the music pill; null when off. */
+    private NowPlaying nowPlaying;
     /** The open library came from that button: closing it returns there instead of scrolling to the grid's end. */
     private boolean libraryFromTopBar;
     /** The open library came from the VPN pill (vpn_pill, no VPN app): closing it returns there while the pill still shows. */

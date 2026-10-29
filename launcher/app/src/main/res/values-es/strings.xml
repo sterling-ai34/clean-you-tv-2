@@ -145,4 +145,10 @@
     <string name="race_countdown_days">%1$dd %2$dh</string>
     <string name="last_opened">Abierta por última vez %1$s</string>
     <string name="game_live">En directo</string>
+    <string name="now_playing">Reproduciendo</string>
+    <string name="now_paused">En pausa</string>
+    <string name="media_previous">Anterior</string>
+    <string name="media_play_pause">Reproducir o pausar</string>
+    <string name="media_next">Siguiente</string>
+    <string name="next_wallpaper">Siguiente fondo</string>
 </resources>

@@ -148,4 +148,10 @@
     <string name="race_countdown_days">%1$d ימ׳ %2$d שע׳</string>
     <string name="last_opened">פתיחה אחרונה: %1$s</string>
     <string name="game_live">בשידור חי עכשיו</string>
+    <string name="now_playing">מתנגן עכשיו</string>
+    <string name="now_paused">מושהה</string>
+    <string name="media_previous">הקודם</string>
+    <string name="media_play_pause">הפעלה או השהיה</string>
+    <string name="media_next">הבא</string>
+    <string name="next_wallpaper">הרקע הבא</string>
 </resources>

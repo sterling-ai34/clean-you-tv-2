@@ -178,7 +178,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
-                android:layout_toStartOf="@+id/topButtons"
+                android:layout_toStartOf="@+id/nowPlaying"
                 android:layout_marginEnd="16dp"
                 android:orientation="vertical">
 
@@ -372,12 +372,119 @@
                     android:drawableStart="@drawable/ic_apps_pill"
                     android:nextFocusDown="@+id/grid" />
 
+                <!-- wallpaper_button: OK shows the next wallpaper, hold OK opens Launcher settings. -->
+                <TextView
+                    android:id="@+id/btnWallpaper"
+                    style="@style/TopButtonIcon"
+                    android:visibility="gone"
+                    android:contentDescription="@string/next_wallpaper"
+                    android:drawableStart="@drawable/ic_wallpaper"
+                    android:nextFocusDown="@+id/grid" />
+
                 <TextView
                     android:id="@+id/btnSettings"
                     style="@style/TopButton"
                     android:text="@string/settings"
                     android:drawableStart="@drawable/ic_settings"
                     android:nextFocusDown="@+id/grid" />
+            </LinearLayout>
+
+            <!-- now_playing: the playing song's artwork, title and artist with previous / play / next, left of the
+                 top buttons. Gone while nothing plays; the clock block then reaches the buttons again (a rule that
+                 names a gone view follows that view's own rule). -->
+            <LinearLayout
+                android:id="@+id/nowPlaying"
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"
+                android:layout_toStartOf="@id/topButtons"
+                android:layout_alignBottom="@id/topButtons"
+                android:layout_marginEnd="6dp"
+                android:layout_marginBottom="-9dp"
+                android:paddingStart="10dp"
+                android:paddingEnd="8dp"
+                android:background="@drawable/now_playing_bg"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/npArt"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    android:background="@drawable/now_playing_art_bg"
+                    android:scaleType="centerCrop"
+                    android:importantForAccessibility="no" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/npKicker"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:singleLine="true"
+                        android:text="@string/now_playing"
+                        android:textColor="#99FFFFFF"
+                        android:textSize="10sp"
+                        android:fontFamily="@string/font_medium"
+                        android:letterSpacing="0.18"
+                        android:textAllCaps="true" />
+
+                    <TextView
+                        android:id="@+id/npTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:maxWidth="170dp"
+                        android:singleLine="true"
+                        android:ellipsize="end"
+                        android:textColor="#FFFFFFFF"
+                        android:textSize="15sp"
+                        android:fontFamily="@string/font_medium"
+                        android:includeFontPadding="false" />
+
+                    <TextView
+                        android:id="@+id/npArtist"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:maxWidth="170dp"
+                        android:singleLine="true"
+                        android:ellipsize="end"
+                        android:textColor="#B3FFFFFF"
+                        android:textSize="12sp"
+                        android:fontFamily="@string/font_regular" />
+                </LinearLayout>
+
+                <com.gathin.tvhome.EqualizerView
+                    android:id="@+id/npBars"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginEnd="6dp"
+                    android:importantForAccessibility="no" />
+
+                <ImageView
+                    android:id="@+id/npPrev"
+                    style="@style/MediaButton"
+                    android:src="@drawable/ic_media_prev"
+                    android:contentDescription="@string/media_previous" />
+
+                <ImageView
+                    android:id="@+id/npPlay"
+                    style="@style/MediaButton"
+                    android:src="@drawable/ic_media_pause"
+                    android:contentDescription="@string/media_play_pause" />
+
+                <ImageView
+                    android:id="@+id/npNext"
+                    style="@style/MediaButton"
+                    android:src="@drawable/ic_media_next"
+                    android:contentDescription="@string/media_next" />
             </LinearLayout>
         </RelativeLayout>
 

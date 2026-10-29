@@ -226,4 +226,10 @@ if [ "${HOME_KEY_SERVICE:-0}" = 1 ]; then enable_service HomeKeyService; fi
 if [ "${RESTORE_KEY_SERVICES:-0}" = 1 ]; then
   "$PY" -I ../tools/tv.py "pm grant com.gathin.tvhome android.permission.WRITE_SECURE_SETTINGS && echo restore-granted"
 fi
+# NOW_PLAYING=1  notification access for the music pill (now_playing, config.xml or a theme): Android lists the
+#                playing media sessions only to an enabled notification listener. Android TV has no settings page
+#                for it, so it is granted here; `cmd notification disallow_listener` with the same name takes it back.
+if [ "${NOW_PLAYING:-0}" = 1 ]; then
+  "$PY" -I ../tools/tv.py "cmd notification allow_listener com.gathin.tvhome/com.gathin.tvhome.MediaListener && echo now-playing-granted"
+fi
 echo "Installed. Press Home on the remote to see it."

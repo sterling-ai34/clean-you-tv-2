@@ -36,6 +36,8 @@ SCREENSHOT_WANTED = {
     "tile_menu", "top_menu", "vpn_app", "wallpaper", "wallpaper_captions", "wallpaper_dim",
     "wallpaper_moods", "wallpaper_order", "wallpaper_true_color", "wifi_label_width",
     "wifi_status_color",
+    # This fork's own switches (square tiles, music pill, wallpaper button): screenshots to come from the TCL 55Q77K.
+    "square_tiles", "now_playing", "wallpaper_button",
 }
 
 

@@ -176,7 +176,25 @@ final class WallpaperPlayer {
             selected = WallpaperRotation.pick(playable, previous, order, random);
         }
         if (selected == null || selected.getName().equals(displayed)) return;
-        File next = selected;
+        load(selected, previous, changed);
+    }
+
+    /**
+     * wallpaper_button: shows the collection's next picture now, in filename order, and restarts the rotation's
+     * interval from it. False when there is no other picture to show (a single one, or one picked on the TV).
+     */
+    boolean next() {
+        List<File> playable = playable();
+        if (closed || playable.size() < 2) return false;
+        if (loading) return true;
+        String previous = preferences.getString("image", "");
+        File next = WallpaperRotation.next(playable, displayed.isEmpty() ? previous : displayed);
+        if (next != null) load(next, previous, 0);
+        return true;
+    }
+
+    /** Decodes a picture off the main thread, then shows it and records it as the current one. */
+    private void load(File next, String previous, long changed) {
         loading = true;
         decoder.execute(() -> {
             Bitmap bitmap = decode(next);
